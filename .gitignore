@@ -1,0 +1,87 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+.env
+.env.*
+.venv/
+venv/
+dist/
+build/
+pip-wheel-metadata/
+
+# =========================
+# NiceGUI / Streamlit
+# =========================
+.nicegui/
+.streamlit/
+
+# =========================
+# FastAPI specific
+# =========================
+*.log
+instance/
+*.sqlite3
+*.db
+*.pid
+
+# =========================
+# Docker & Kubernetes
+# =========================
+*.tar
+*.pid
+docker-compose.override.yml
+docker-compose.debug.yml
+.kube/
+minikube/
+*.swp
+
+# =========================
+# Terraform
+# =========================
+.terraform/
+*.tfstate
+*.tfstate.backup
+terraform.tfvars
+terraform.tfvars.json
+crash.log
+override.tf
+override.tf.json
+*.plan
+
+# =========================
+# Vault / Secrets
+# =========================
+vault-data/
+# *.hcl
+*.pem
+*.key
+*.crt
+*.jks
+*.enc
+*.secret
+secrets.yaml
+secrets.env
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+*.code-workspace
+
+# =========================
+# Mac / Linux / Windows System
+# =========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.bak
+*.tmp
