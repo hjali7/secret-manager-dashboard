@@ -18,3 +18,11 @@ module "database" {
     kubernetes_namespace.app_namespace
   ]
 }
+
+module "vault" {
+  source = "../../modules/vault"
+  namespace = kubernetes_namespace.app_namespace.metadata[0].name
+  depends_on = [
+    kubernetes_namespace.app_namespace
+  ]
+}
