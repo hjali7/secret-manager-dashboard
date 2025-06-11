@@ -1,6 +1,6 @@
-variable "db_user" {}
-variable "db_password" {}
-variable "db_name" {}
+# variable "db_user" {}
+# variable "db_password" {}
+# variable "db_name" {}
 
 provider "kubernetes" {
   config_path    = "~/.kube/config"
