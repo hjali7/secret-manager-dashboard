@@ -26,3 +26,16 @@ module "vault" {
     kubernetes_namespace.app_namespace
   ]
 }
+
+module "backend_app" {
+  source = "../../modules/app/backend"
+
+  namespce  = kubernetes_namespace.app_namespace.metadata[0].name
+  image_name = "alihajizadeh/secret-backend:1.0.0"
+  replicas   = 2
+
+  depends_on = [
+    module.database,
+    module.vault
+  ]
+}
