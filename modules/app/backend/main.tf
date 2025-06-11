@@ -30,6 +30,43 @@ resource "kubernetes_deployment" "backend" {
           port {
             container_port = 8000
           }
+          env {
+            # نام متغیری که اپلیکیشن پایتون انتظار دارد
+            name = "DB_USER"
+            value_from {
+              secret_key_ref {
+                # ارجاع به سکرت دیتابیس
+                name = "postgres-secret"
+                # کلیدی که در آن سکرت وجود دارد
+                key  = "POSTGRES_USER"
+              }
+            }
+          }
+
+          env {
+            name = "DB_PASSWORD"
+            value_from {
+              secret_key_ref {
+                name = "postgres-secret"
+                key  = "POSTGRES_PASSWORD"
+              }
+            }
+          }
+
+          env {
+            name = "DB_NAME"
+            value_from {
+              secret_key_ref {
+                name = "postgres-secret"
+                key  = "POSTGRES_DB"
+              }
+            }
+          }
+
+          env {
+            name  = "DB_HOST"
+            value = "postgres-service"
+          }
 
           readiness_probe {
             http_get {

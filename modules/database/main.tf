@@ -4,9 +4,9 @@ resource "kubernetes_secret" "postgres_secret" {
     namespace = var.namespace
   }
   data = {
-    "POSTGRES_USER"     = "padmin"
-    "POSTGRES_PASSWORD" = "SuperSecretPassword123" # در پروژه واقعی این باید از جای امن‌تری بیاید
-    "POSTGrofoam_DB"        = "secrets_db"
+    "POSTGRES_USER"     = var.db_user
+    "POSTGRES_PASSWORD" = var.db_password
+    "POSTGRES_DB"        = var.db_name
   }
   type = "Opaque"
 }
