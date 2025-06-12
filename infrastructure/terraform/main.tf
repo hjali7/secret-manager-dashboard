@@ -1,7 +1,3 @@
-# variable "db_user" {}
-# variable "db_password" {}
-# variable "db_name" {}
-
 provider "kubernetes" {
   config_path    = "~/.kube/config"
   config_context = var.k8s_context
@@ -26,23 +22,14 @@ module "database" {
   ]
 }
 
-module "vault" {
-  source = "../../modules/vault"
-  namespace = kubernetes_namespace.app_namespace.metadata[0].name
-  depends_on = [
-    kubernetes_namespace.app_namespace
-  ]
-}
-
 module "backend_app" {
   source = "../../modules/app/backend"
 
-  namespce  = kubernetes_namespace.app_namespace.metadata[0].name
-  image_name = "alihajizadeh/secret-backend:1.1.0"
+  namespace  = kubernetes_namespace.app_namespace.metadata[0].name
+  image_name = "alihajizadeh/secret-backend:1.3.0"
   replicas   = 2
 
   depends_on = [
     module.database,
-    module.vault
   ]
 }
