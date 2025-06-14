@@ -1,10 +1,16 @@
+# modules/app/backend/main.tf (نسخه نهایی و صحیح)
+
+resource "kubernetes_service_account" "backend_sa" {
+  metadata {
+    name      = "backend-sa"
+    namespace = var.namespace
+  }
+}
+
 resource "kubernetes_deployment" "backend" {
   metadata {
     name      = "backend-deployment"
     namespace = var.namespace
-    labels = {
-      app = "backend"
-    }
   }
 
   spec {
@@ -19,24 +25,42 @@ resource "kubernetes_deployment" "backend" {
         labels = {
           app = "backend"
         }
+        annotations = {
+          "vault.hashicorp.com/agent-inject"                 = "true"
+          "vault.hashicorp.com/role"                         = "backend-role"
+          "vault.hashicorp.com/agent-inject-secret-db-creds"   = "secret/data/database/postgres-creds"
+          "vault.hashicorp.com/agent-inject-template-db-creds" = <<-EOT
+            {{- with secret "secret/data/database/postgres-creds" -}}
+            DB_USER={{ .Data.data.db_user }}
+            DB_PASSWORD={{ .Data.data.db_password }}
+            {{- end -}}
+          EOT
+        }
       }
       spec {
+        service_account_name = kubernetes_service_account.backend_sa.metadata[0].name
         container {
           name  = "backend-container"
-          image = var.image_name 
-
+          image = var.image_name
           port {
             container_port = 8000
-          }
-
-          env_from {
-            secret_ref {
-              name = "postgres-secret"
-            }
           }
           env {
             name  = "DB_HOST"
             value = "postgres-service"
+          }
+          env {
+            name  = "DB_NAME"
+            value = "secrets_db"
+          }
+          readiness_probe {
+            http_get {
+              path = "/health"
+              port = 8000
+            }
+            initial_delay_seconds = 20 # افزایش زمان برای دادن فرصت به ایجنت والت
+            period_seconds        = 10
+            failure_threshold     = 6
           }
         }
       }

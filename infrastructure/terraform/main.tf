@@ -12,24 +12,19 @@ resource "kubernetes_namespace" "app_namespace" {
 module "database" {
   source = "../../modules/database"
 
-  namespace = var.app_namespace
+  namespace   = var.app_namespace
   db_user     = var.db_user
   db_password = var.db_password
   db_name     = var.db_name
-  
-  depends_on = [
-    kubernetes_namespace.app_namespace
-  ]
+
+  depends_on = [kubernetes_namespace.app_namespace]
 }
 
 module "backend_app" {
   source = "../../modules/app/backend"
 
-  namespace  = kubernetes_namespace.app_namespace.metadata[0].name
-  image_name = "alihajizadeh/secret-backend:1.3.0"
-  replicas   = 2
-
-  depends_on = [
-    module.database,
-  ]
+  namespace  = var.app_namespace
+  image_name = "alihajizadeh/secret-backend:1.2.0"
+  replicas   = 1
+  depends_on = [module.database]
 }
