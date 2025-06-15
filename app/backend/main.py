@@ -28,7 +28,7 @@ def get_db_credentials():
 
 @app.get("/")
 def read_root():
-    return {"status": "backend_is_running", "version": "2.0.0-vault-final"}
+    return {"status": "backend_is_running", "version": "1.4.0-final-CI/CD"}
 
 @app.get("/health")
 def health_check():
