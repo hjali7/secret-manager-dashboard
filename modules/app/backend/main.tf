@@ -1,5 +1,3 @@
-# modules/app/backend/main.tf (نسخه نهایی و صحیح)
-
 resource "kubernetes_service_account" "backend_sa" {
   metadata {
     name      = "backend-sa"
@@ -46,11 +44,11 @@ resource "kubernetes_deployment" "backend" {
             container_port = 8000
           }
           env {
-            name  = "DB_HOST"
+            name = "DB_HOST"
             value = "postgres-service"
           }
           env {
-            name  = "DB_NAME"
+            name = "DB_NAME"
             value = "secrets_db"
           }
           readiness_probe {
