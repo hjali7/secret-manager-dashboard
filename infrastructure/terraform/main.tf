@@ -24,7 +24,7 @@ module "backend_app" {
   source = "../../modules/app/backend"
 
   namespace  = var.app_namespace
-  image_name = "alihajizadeh/secret-backend:1.3.1"
+  image_name = "alihajizadeh/secret-backend:v1.4.0"
   replicas   = 1
   depends_on = [module.database]
 }

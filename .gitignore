@@ -30,6 +30,7 @@ instance/
 *.sqlite3
 *.db
 *.pid
+*.venv
 
 # =========================
 # Docker & Kubernetes
