@@ -12,7 +12,7 @@ resource "kubernetes_deployment" "backend" {
   }
 
   spec {
-    replicas = 1
+    replicas = var.replicas
     selector {
       match_labels = {
         app = "backend"
@@ -37,24 +37,28 @@ resource "kubernetes_deployment" "backend" {
       }
       spec {
         service_account_name = kubernetes_service_account.backend_sa.metadata[0].name
+
         container {
-          name  = "backend-container"
           image = var.image_name
+          name  = "backend-container"
+
           port {
             container_port = 8000
           }
+
           env {
-            name = "DB_HOST"
+            name  = "DB_HOST"
             value = "postgres-service"
           }
           env {
-            name = "DB_NAME"
+            name  = "DB_NAME"
             value = "secrets_db"
           }
           env {
             name  = "REDIS_HOST"
             value = "redis-service"
           }
+
           readiness_probe {
             http_get {
               path = "/health"
