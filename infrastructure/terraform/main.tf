@@ -24,7 +24,13 @@ module "backend_app" {
   source = "../../modules/app/backend"
 
   namespace  = var.app_namespace
-  image_name = "alihajizadeh/secret-backend:v1.4.0"
+  image_name = "alihajizadeh/secret-backend:v2.0.0"
   replicas   = 1
   depends_on = [module.database]
+}
+
+module "redis" {
+  source = "../../modules/redis"
+  namespace = var.app_namespace
+  depends_on = [kubernetes_namespace.app_namespace]
 }

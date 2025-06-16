@@ -51,12 +51,16 @@ resource "kubernetes_deployment" "backend" {
             name = "DB_NAME"
             value = "secrets_db"
           }
+          env {
+            name  = "REDIS_HOST"
+            value = "redis-service"
+          }
           readiness_probe {
             http_get {
               path = "/health"
               port = 8000
             }
-            initial_delay_seconds = 20 # افزایش زمان برای دادن فرصت به ایجنت والت
+            initial_delay_seconds = 20
             period_seconds        = 10
             failure_threshold     = 6
           }
