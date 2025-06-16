@@ -11,7 +11,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import time
-
+from sqlalchemy import text
 from database import SessionLocal, get_db_session
 import models
 import schemas
@@ -75,7 +75,7 @@ async def health_check(request: Request):
     try:
         # Check database connection
         with get_db_session() as db:
-            db.execute("SELECT 1")
+            db.execute(text("SELECT 1"))
         
         # Check Redis connection
         cache.ping()
