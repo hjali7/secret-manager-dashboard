@@ -173,37 +173,28 @@ async def read_secrets(
 
 @app.post("/secrets/search", response_model=List[schemas.SecretResponse])
 @limiter.limit("60/minute")
-async def search_secrets(
-    request: Request,
-    payload: schemas.SearchPayload,
-    db: Session = Depends(get_db_session)
-):
+def search_secrets(payload: schemas.SearchPayload, db: Session = Depends(database.get_db)):
     try:
         query = db.query(models.Secret)
-        
-        # Apply soft delete filter
-        if not payload.include_deleted:
-            query = query.filter(models.Secret.is_deleted == False)
-            
-        # Apply search filters
+
+        # اعمال فیلترهای داینامیک
         if payload.filters:
             query = apply_search_filters(query, payload.filters)
-            
-        # Apply sorting
+        
+        # اعمال مرتب‌سازی (Sorting)
         if payload.sort_by:
-            sort_column = getattr(models.Secret, payload.sort_by)
-            if payload.sort_order == "desc":
-                sort_column = sort_column.desc()
-            query = query.order_by(sort_column)
-            
-        # Apply pagination
-        query = query.offset((payload.page - 1) * payload.page_size).limit(payload.page_size)
+            sort_column = getattr(models.Secret, payload.sort_by, None)
+            if sort_column:
+                if payload.sort_order.lower() == "desc":
+                    query = query.order_by(sort_column.desc())
+                else:
+                    query = query.order_by(sort_column.asc())
         
         secrets = query.all()
         return secrets
+    except AttributeError:
+        # اگر کاربر یک فیلد نامعتبر برای sort_by فرستاد
+        raise HTTPException(status_code=400, detail=f"Invalid sort field specified: {payload.sort_by}")
     except Exception as e:
-        logger.error(f"Error searching secrets: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to search secrets"
-        )
+        logger.error(f"Error during secret search: {str(e)}")
+        raise HTTPException(status_code=500, detail="An error occurred while searching for secrets.")
