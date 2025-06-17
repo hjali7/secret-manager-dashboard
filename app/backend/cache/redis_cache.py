@@ -2,11 +2,22 @@ from typing import Any, Optional
 import json
 from redis import Redis
 from datetime import timedelta
+import logging
+
+logger = logging.getLogger(__name__)
 
 class RedisCache:
     def __init__(self, host: str = "localhost", port: int = 6379, db: int = 0):
         self.redis_client = Redis(host=host, port=port, db=db, decode_responses=True)
         self.default_ttl = timedelta(hours=1)
+    
+    def ping(self) -> bool:
+        """Checks the connection to the Redis server."""
+        try:
+            return self.redis_client.ping()
+        except Exception as e:
+            logger.error(f"Redis connection failed: {e}")
+            return False
 
     def get(self, key: str) -> Optional[Any]:
         """Get value from cache"""
